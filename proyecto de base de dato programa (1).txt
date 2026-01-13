@@ -1,0 +1,89 @@
+import random
+import string
+
+# Función para generar contraseñas seguras
+def generar_contraseña(longitud=12):
+    if longitud < 8:  # Validar que la longitud sea segura
+        print("La longitud mínima recomendada es 8 caracteres.")
+        return generar_contraseña(8)
+    
+    # Variable que contiene letras, números y caracteres especiales
+    caracteres = string.ascii_letters + string.digits + string.punctuation
+    
+    # Genera una contraseña aleatoria combinando caracteres seleccionados al azar
+    contraseña = ''.join(random.choice(caracteres) for _ in range(longitud))
+    return contraseña
+
+# Función para verificar la fuerza de una contraseña
+def verificar_fuerza(contraseña):
+    longitud = len(contraseña) >= 8
+    mayuscula = any(char.isupper() for char in contraseña)
+    minuscula = any(char.islower() for char in contraseña)
+    numero = any(char.isdigit() for char in contraseña)
+    simbolo = any(char in string.punctuation for char in contraseña)
+
+    # Verificación recursiva: determina el nivel de seguridad
+    def nivel_seguridad(puntos, niveles=0):
+        if puntos == 0:
+            return niveles
+        return nivel_seguridad(puntos - 1, niveles + 1)
+
+    puntos = sum([longitud, mayuscula, minuscula, numero, simbolo])
+    nivel = nivel_seguridad(puntos)
+
+    if nivel == 5:
+        return "Muy fuerte"
+    elif nivel == 4:
+        return "Fuerte"
+    elif nivel == 3:
+        return "Moderada"
+    else:
+        return "Débil"
+
+# Función para generar 10 contraseñas aleatorias y guardarlas en una lista
+def generar_lista_contraseñas(cantidad=10, longitud=12):
+    contraseñas = []
+    for _ in range(cantidad):
+        contraseña = generar_contraseña(longitud)
+        contraseñas.append(contraseña)
+    return contraseñas
+
+# Función para mostrar el menú
+def mostrar_menu():
+    print("\n=== Generador y Verificador de Contraseñas ===")
+    print("1. Generar contraseña segura")
+    print("2. Verificar la fuerza de una contraseña")
+    print("3. Generar y mostrar 10 contraseñas aleatorias")
+    print("4. Salir")
+
+# Función principal que controla el programa
+def main():
+    while True:
+        mostrar_menu()
+        opcion = input("Elige una opción: ")
+
+        if opcion == "1":
+            try:
+                longitud = int(input("Introduce la longitud de la contraseña: "))
+                contraseña = generar_contraseña(longitud)
+                print(f"Contraseña generada: {contraseña}")
+            except ValueError:
+                print("Por favor, introduce un número válido.")
+        elif opcion == "2":
+            contraseña = input("Introduce la contraseña a verificar: ")
+            fuerza = verificar_fuerza(contraseña)
+            print(f"Fuerza de la contraseña: {fuerza}")
+        elif opcion == "3":
+            contraseñas = generar_lista_contraseñas()
+            print("\n10 contraseñas generadas aleatoriamente:")
+            for i, contraseña in enumerate(contraseñas, 1):
+                print(f"{i}. {contraseña}")
+        elif opcion == "4":
+            print("Saliendo del programa. ¡Hasta luego!")
+            break
+        else:
+            print("Opción no válida. Inténtalo de nuevo.")
+
+# Ejecución del programa
+if __name__ == "__main__":
+    main()
